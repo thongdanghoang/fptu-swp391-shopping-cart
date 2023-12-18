@@ -1,0 +1,23 @@
+Get code from redirect url
+http://localhost:9090/oauth/authorize?response_type=code&client_id=client&scope=n3tk
+
+Request access token by exchanging code
+curl -v -XPOST -u client:secret "http://localhost:9090/oauth/token?grant_type=authorization_code&scope=n3tk&code="
+
+use access token to access resource
+curl -H "Authorization:Bearer " http:// localhost:9092/hello
+
+alias=auth-server
+password=P@ssW0rd
+privateKey=auth-server.jks
+
+generate private key
+keytool -genkeypair -alias auth-server -keyalg RSA -keypass P@ssW0rd -keystore auth-server.jks -storepass P@ssW0rd
+
+generate public key from private key
+keytool -list -rfc --keystore auth-server.jks | openssl x509 -inform pem -pubkey
+
+macos terminal command find files containing text `KEY_PASSWORD` in this directory
+grep -rnw . -e 'KEY_PASSWORD'
+
+mvn clean install -DskipTests
