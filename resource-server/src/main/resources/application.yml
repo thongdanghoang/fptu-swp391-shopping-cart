@@ -1,0 +1,24 @@
+server:
+  port: 8000
+  forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+      port-header: x-forwarded-port
+
+
+introspection-uri: http://${AUTH-SERVER}:${AUTH-SERVER-PORT}/oauth2/introspect
+client-id: ${RESOURCE-SERVER-CLIENT-ID}
+client-secret: ${RESOURCE-SERVER-CLIENT-SECRET}
+
+# mysql datasource
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false

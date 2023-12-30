@@ -33,13 +33,6 @@ build/
 .vscode/
 
 ### Maven ###
-.mvn/
+.mvn
 mvnw
 mvnw.cmd
-
-### VS Code ###
-.vscode/
-
-### Secret ###
-*.env
-*.jks
