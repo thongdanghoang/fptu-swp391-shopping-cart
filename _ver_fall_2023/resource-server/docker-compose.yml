@@ -1,0 +1,36 @@
+version: "3.9"
+
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  # mysql database
+  resource-db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      TZ: Asia/Bangkok
+    ports:
+      - "9091:3306"
+  # spring boot app
+  resource-server:
+    build: .
+    ports:
+      - "9090:8080"
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MAILGUN_DOMAIN_NAME: ${MAILGUN_DOMAIN_NAME}
+      MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+      TWILIO_SERVICE_SID: ${TWILIO_SERVICE_SID}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      TZ: Asia/Bangkok
+    depends_on:
+      - resource-db

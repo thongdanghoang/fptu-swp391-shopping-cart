@@ -1,0 +1,64 @@
+version: "3.9"
+services:
+  # mysql database
+  auth-db:
+    image: mysql:latest
+    restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent" ]
+      interval: 3s
+      retries: 5
+      start_period: 10s
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_USER}
+      MYSQL_DATABASE: ${MYSQL_PASSWORD}
+      TZ: Asia/Bangkok
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    networks:
+      - backNet
+  # spring boot app
+  auth-service:
+    build: .
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 3s
+      retries: 5
+      start_period: 10s
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MAILGUN_DOMAIN_NAME: ${MAILGUN_DOMAIN_NAME}
+      MAILGUN_API_KEY: ${MAILGUN_API_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      KEY_PRIVATE: ${KEY_PRIVATE}
+      KEY_PASSWORD: ${KEY_PASSWORD}
+      KEY_ALIAS: ${KEY_ALIAS}
+      TZ: Asia/Bangkok
+    expose:
+      - 8080
+    networks:
+      - backNet
+      - frontNet
+    depends_on:
+      auth-db:
+        condition: service_healthy
+  auth-proxy:
+    build: proxy
+    restart: always
+    ports:
+      - "443:443"
+    networks:
+      - frontNet
+    depends_on:
+      auth-service:
+        condition: service_healthy
+networks:
+  frontNet:
+  backNet:
